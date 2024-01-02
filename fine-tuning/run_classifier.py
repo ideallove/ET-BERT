@@ -220,23 +220,23 @@ def evaluate(args, dataset, print_confusion_matrix=False):
             confusion[pred[j], gold[j]] += 1
         correct += torch.sum(pred == gold).item()
 
-    if print_confusion_matrix:
-        print("Confusion matrix:")
-        print(confusion)
-        cf_array = confusion.numpy()
-        with open("/data2/lxj/pre-train/results/confusion_matrix",'w') as f:
-            for cf_a in cf_array:
-                f.write(str(cf_a)+'\n')
-        print("Report precision, recall, and f1:")
-        eps = 1e-9
-        for i in range(confusion.size()[0]):
-            p = confusion[i, i].item() / (confusion[i, :].sum().item() + eps)
-            r = confusion[i, i].item() / (confusion[:, i].sum().item() + eps)
-            if (p + r) == 0:
+    if print_confusion_matrix:  # 如果需要打印混淆矩阵
+        print("Confusion matrix:")  # 打印混淆矩阵标题
+        print(confusion)  # 打印混淆矩阵的内容
+        cf_array = confusion.numpy()  # 将混淆矩阵转换为NumPy数组
+        with open("./pre-train/results/confusion_matrix", 'w+') as f:  # 打开文件以保存混淆矩阵
+            for cf_a in cf_array:  # 遍历混淆矩阵的每一行
+                f.write(str(cf_a) + '\n')  # 将每一行写入文件
+        print("Report precision, recall, and f1:")  # 打印精度、召回率和F1分数报告标题
+        eps = 1e-9  # 避免除零错误的小值
+        for i in range(confusion.size()[0]):  # 遍历每个类别
+            p = confusion[i, i].item() / (confusion[i, :].sum().item() + eps)  # 计算精度
+            r = confusion[i, i].item() / (confusion[:, i].sum().item() + eps)  # 计算召回率
+            if (p + r) == 0:  # 处理除零错误
                 f1 = 0
             else:
-                f1 = 2 * p * r / (p + r)
-            print("Label {}: {:.3f}, {:.3f}, {:.3f}".format(i, p, r, f1))
+                f1 = 2 * p * r / (p + r)  # 计算F1分数
+            print("Label {}: {:.3f}, {:.3f}, {:.3f}".format(i, p, r, f1))  # 打印每个类别的精度、召回率和F1分数
 
     print("Acc. (Correct/Total): {:.4f} ({}/{}) ".format(correct / len(dataset), correct, len(dataset)))
     return correct / len(dataset), confusion
@@ -261,7 +261,7 @@ def main():
                         help="Train model with logits.")
     parser.add_argument("--soft_alpha", type=float, default=0.5,
                         help="Weight of the soft targets loss.")
-    
+
     args = parser.parse_args()
 
     # Load the hyperparameters from the config file.
@@ -289,7 +289,7 @@ def main():
     random.shuffle(trainset)
     instances_num = len(trainset)
     batch_size = args.batch_size
-    
+
     src = torch.LongTensor([example[0] for example in trainset])
     tgt = torch.LongTensor([example[1] for example in trainset])
     seg = torch.LongTensor([example[2] for example in trainset])
