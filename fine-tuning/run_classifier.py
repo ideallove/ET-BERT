@@ -224,9 +224,12 @@ def evaluate(args, dataset, print_confusion_matrix=False):
         print("Confusion matrix:")  # 打印混淆矩阵标题
         print(confusion)  # 打印混淆矩阵的内容
         cf_array = confusion.numpy()  # 将混淆矩阵转换为NumPy数组
-        with open("./pre-train/results/confusion_matrix", 'w+') as f:  # 打开文件以保存混淆矩阵
-            for cf_a in cf_array:  # 遍历混淆矩阵的每一行
-                f.write(str(cf_a) + '\n')  # 将每一行写入文件
+        # with open("./pre-train/results/confusion_matrix", 'w+') as f:  # 打开文件以保存混淆矩阵
+        #     for cf_a in cf_array:  # 遍历混淆矩阵的每一行
+        #         f.write(str(cf_a) + '\n')  # 将每一行写入文件
+        for cf_a in cf_array:
+            print(str(cf_a))
+            print('\n')
         print("Report precision, recall, and f1:")  # 打印精度、召回率和F1分数报告标题
         eps = 1e-9  # 避免除零错误的小值
         for i in range(confusion.size()[0]):  # 遍历每个类别
