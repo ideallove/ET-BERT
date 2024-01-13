@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 #-*- coding:utf-8 -*-
 
 import numpy as np
@@ -27,19 +26,19 @@ dataset_dir = "I:\\datasets\\" # the path to save dataset for dine-tuning
 pcap_path, dataset_save_path, samples, features, dataset_level = "I:\\cstnet-tls1.3\\packet\\splitcap\\", "I:\\cstnet-tls1.3\\packet\\result\\", [5000], ["payload"], "packet"
 
 def dataset_extract(model):
-    
+
     X_dataset = {}
     Y_dataset = {}
 
     try:
         if os.listdir(dataset_save_path + "dataset\\"):
             print("Reading dataset from %s ..." % (dataset_save_path + "dataset\\"))
-            
+
             x_payload_train, x_payload_test, x_payload_valid,\
             y_train, y_test, y_valid = \
                 np.load(dataset_save_path + "dataset\\x_datagram_train.npy",allow_pickle=True), np.load(dataset_save_path + "dataset\\x_datagram_test.npy",allow_pickle=True), np.load(dataset_save_path + "dataset\\x_datagram_valid.npy",allow_pickle=True),\
                 np.load(dataset_save_path + "dataset\\y_train.npy",allow_pickle=True), np.load(dataset_save_path + "dataset\\y_test.npy",allow_pickle=True), np.load(dataset_save_path + "dataset\\y_valid.npy",allow_pickle=True)
-            
+
             X_dataset, Y_dataset = models_deal(model, X_dataset, Y_dataset,
                                                x_payload_train, x_payload_test,
                                                x_payload_valid,
@@ -74,8 +73,8 @@ def dataset_extract(model):
                 for index_sample in range(len(X[0][index_label])):
                     X_payload.append(X[0][index_label][index_sample])
 
-    split_1 = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=41) 
-    split_2 = StratifiedShuffleSplit(n_splits=1, test_size=0.5, random_state=42) 
+    split_1 = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=41)
+    split_2 = StratifiedShuffleSplit(n_splits=1, test_size=0.5, random_state=42)
 
     x_payload = np.array(X_payload)
     dataset_label = np.array(Y_all)
@@ -198,7 +197,7 @@ def pickle_save_data(path_file, data):
 
 def count_label_number(samples):
     new_samples = samples * _category
-    
+
     if 'splitcap' not in pcap_path:
         dataset_length, labels = open_dataset_deal.statistic_dataset_sample_count(pcap_path + 'splitcap\\')
     else:
@@ -206,13 +205,13 @@ def count_label_number(samples):
 
     for index in range(len(dataset_length)):
         if dataset_length[index] < samples[0]:
-            print("label %s has less sample's number than defined samples %d" % (labels[index], samples[0]))、
+            print("label %s has less sample's number than defined samples %d" % (labels[index], samples[0]))
             new_samples[index] = dataset_length[index]
     return new_samples
 
-if __name__ == '__main__':、
+if __name__ == '__main__':
     open_dataset_not_pcap = 0
-    
+
     if open_dataset_not_pcap:
         #open_dataset_deal.dataset_file2dir(pcap_path)
         for p,d,f in os.walk(pcap_path):
